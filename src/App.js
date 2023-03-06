@@ -22,6 +22,7 @@ import Revenue from "./pages/overview/Revenue";
 import Products from "./pages/Products";
 import Messages1 from "./pages/messages/Messages1";
 import Messages2 from "./pages/messages/Messages2";
+import PinkGems from "./pages/overview/PinkGems";
 
 export default function App() {
   return (
@@ -30,8 +31,9 @@ export default function App() {
         <Sidebar />
         <div className="element-container">
           <Routes>
-            <Route path="/" element={<Users />} />
+            <Route path="/" element={<PinkGems />} />
             <Route path="/overview" element={<Overview />} />
+            <Route path="/overview/pinkgems" element={<PinkGems />} />
             <Route path="/overview/users" element={<Users />} />
             <Route path="/overview/revenue" element={<Revenue />} />
             <Route path="/reports" element={<Reports />} />

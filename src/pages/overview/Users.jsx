@@ -52,7 +52,7 @@ const Users = () => {
   }
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'no', headerName: 'No.', width: 70 },
     { field: 'name', headerName: 'Name', width: 130 },
     { field: 'color', headerName: 'Color', width: 130 },
     {
