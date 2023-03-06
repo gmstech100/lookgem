@@ -13,7 +13,7 @@ import {
 
 const cellImage = (params) => {
   console.log(params);
-  const imageUrl = "https://en.wiktionary.org/wiki/" + params.value;
+  const poocoinUrl = "https://poocoin.app/tokens/" + params.value;
   return (
     <>
       <a
@@ -22,13 +22,7 @@ const cellImage = (params) => {
           color: "#0a53bf",
           cursor: "pointer",
         }}
-        onClick={() =>
-          window.open(
-            imageUrl,
-            "Image",
-            "width=1000,height=1000,screenX=2000,screenY=200"
-          )
-        }
+        onClick={() => window.open(poocoinUrl, "_blank")}
       >
         {params.value}
       </a>
@@ -62,8 +56,8 @@ const PinkGems = () => {
       token: tokenSearch,
       tokenAddress: tokenAddressSearch,
       followers: followersSearch,
-      statusKyc: statusKyc,
-      statusChart: statusChart,
+      hasKyc: statusKyc,
+      hasPump: statusChart,
     };
     fetchPinkgems(params)
       .then((res) => {
@@ -84,8 +78,8 @@ const PinkGems = () => {
       token: tokenSearch,
       tokenAddress: tokenAddressSearch,
       followers: followersSearch,
-      statusKyc: statusKyc,
-      statusChart: statusChart,
+      hasKyc: statusKyc,
+      hasPump: statusChart,
     };
     fetchPinkgems(params)
       .then((res) => {
@@ -123,8 +117,8 @@ const PinkGems = () => {
       renderCell: cellImage,
     },
     { field: "followers", headerName: "Followers", width: 80 },
-    { field: "statusKyc", headerName: "KYC", width: 30 },
-    { field: "statusChart", headerName: "Chart", width: 30 },
+    { field: "hasKyc", headerName: "KYC", width: 30 },
+    { field: "hasPump", headerName: "Chart", width: 30 },
   ];
 
   return (
