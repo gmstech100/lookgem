@@ -14,8 +14,13 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: 'PinkGems',
+        title: 'Pink Gems Listed',
         path: '/overview/pinkgems',
+        icon: <IoIcons.IoIosPaper />
+      },
+      {
+        title: 'Gem Watching',
+        path: '/overview/gemwatching',
         icon: <IoIcons.IoIosPaper />
       },
       {

@@ -10,9 +10,9 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
+import PinkGemInsert from "./PinkGemInsert";
 
-const cellImage = (params) => {
-  console.log(params);
+const cellPooLink = (params) => {
   const poocoinUrl = "https://poocoin.app/tokens/" + params.value;
   return (
     <>
@@ -30,6 +30,41 @@ const cellImage = (params) => {
   );
 };
 
+const cellTwitterLink = (params) => {
+  return (
+    <>
+      <a
+        style={{
+          textDecoration: "underline",
+          color: "#0a53bf",
+          cursor: "pointer",
+        }}
+        onClick={() => window.open(params.value, "_blank")}
+      >
+        {params.value}
+      </a>
+    </>
+  );
+};
+
+const cellAnalysisTwitterLink = (params) => {
+  const url = "https://socialblade.com/twitter/user/" + params.value;
+  return (
+    <>
+      <a
+        style={{
+          textDecoration: "underline",
+          color: "#0a53bf",
+          cursor: "pointer",
+        }}
+        onClick={() => window.open(url, "_blank")}
+      >
+        {params.value}
+      </a>
+    </>
+  );
+};
+
 const PinkGems = () => {
   const [data, setData] = useState([]);
   const [tokenSearch, setTokenSearch] = useState("");
@@ -37,6 +72,9 @@ const PinkGems = () => {
   const [followersSearch, setFollowersSearch] = useState(0);
   const [statusChart, setStatusChart] = React.useState("");
   const [statusKyc, setStatusKyc] = React.useState("");
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(30);
+  const [openInsert, setOpenInsert] = useState(false);
 
   const handleStatusChartChange = (event) => {
     setStatusChart(event.target.value);
@@ -45,24 +83,35 @@ const PinkGems = () => {
     setStatusKyc(event.target.value);
   };
 
+  const handleAdd = () => {
+    setOpenInsert(true);
+  };
+
   const fetchPinkgems = (params) => {
     return axios.get(`${process.env.REACT_APP_BACKEND_URL}/pinkgems`, {
       params,
     });
   };
 
+  const fetchPinkgemsAll = (params) => {
+    return axios.get(`${process.env.REACT_APP_BACKEND_URL}/pinkgems/all`, {
+      params,
+    });
+  };
+
   useEffect(() => {
-    const params = {
-      token: tokenSearch,
-      tokenAddress: tokenAddressSearch,
-      followers: followersSearch,
-      hasKyc: statusKyc,
-      hasPump: statusChart,
-    };
-    fetchPinkgems(params)
+    fetchPinkgemsAll()
       .then((res) => {
         const pinkgems = res.data;
-        setData(pinkgems);
+        // iterate over each object in the data array and add the analysisTwitter field
+        const newData = pinkgems.map((obj) => {
+          // do whatever analysis you need on the twitter field to get the analysisTwitter value
+          const analysisTwitter = `${obj.twitter}`.split('/').pop();
+
+          // return a new object with the analysisTwitter field added
+          return { ...obj, analysisTwitter };
+        });
+        setData(newData);
       })
       .catch((err) => {
         if (err.response && err.response.status === 404) {
@@ -84,7 +133,14 @@ const PinkGems = () => {
     fetchPinkgems(params)
       .then((res) => {
         const pinkgems = res.data;
-        setData(pinkgems);
+        const newData = pinkgems.map((obj) => {
+          // do whatever analysis you need on the twitter field to get the analysisTwitter value
+          const analysisTwitter = `Analysis of ${obj.twitter}`;
+
+          // return a new object with the analysisTwitter field added
+          return { ...obj, analysisTwitter };
+        });
+        setData(newData);
       })
       .catch((err) => {
         if (err.response && err.response.status === 404) {
@@ -107,18 +163,37 @@ const PinkGems = () => {
     setFollowersSearch(e.target.value);
   };
 
+  const handleChangePage = (newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (newPageSize) => {
+    setPageSize(newPageSize);
+  };
+
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "token", headerName: "Token", width: 130 },
+    { field: "token", headerName: "Token", width: 200 },
     {
       field: "tokenAddress",
       headerName: "Token Address",
-      width: 230,
-      renderCell: cellImage,
+      width: 450,
+      renderCell: cellPooLink,
     },
     { field: "followers", headerName: "Followers", width: 80 },
     { field: "hasKyc", headerName: "KYC", width: 30 },
     { field: "hasPump", headerName: "Chart", width: 30 },
+    {
+      field: "twitter",
+      headerName: "Twitter",
+      width: 200,
+      renderCell: cellTwitterLink,
+    },
+    {
+      field: "analysisTwitter",
+      headerName: "Twitter Analysis",
+      width: 200,
+      renderCell: cellAnalysisTwitterLink,
+    },
   ];
 
   return (
@@ -188,7 +263,9 @@ const PinkGems = () => {
         <Button sx={{ marginRight: 1 }} onClick={handleSearch}>
           SEARCH
         </Button>
-        <Button sx={{ marginRight: 1 }}>ADD</Button>
+        <Button sx={{ marginRight: 1 }} onClick={handleAdd}>
+          ADD
+        </Button>
         <Button sx={{ marginRight: 1 }}>DELETE</Button>
       </Box>
       <DataGrid
@@ -198,10 +275,19 @@ const PinkGems = () => {
         }}
         rows={data}
         columns={columns}
-        pageSize={100}
-        rowsPerPageOptions={[10]}
+        pagination
+        rowsPerPageOptions={[15, 30, 75, 100]}
+        rowHeight={30}
+        headerHeight={40}
+        getRowId={(r) => r.id}
+        page={page}
+        pageSize={pageSize}
+        paginationMode="server"
+        onPageChange={handleChangePage}
+        onPageSizeChange={handleChangeRowsPerPage}
         checkboxSelection
       />
+      {openInsert && <PinkGemInsert openInsert setOpenInsert={setOpenInsert} />}
     </div>
   );
 };
