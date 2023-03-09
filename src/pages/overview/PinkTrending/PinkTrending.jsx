@@ -17,6 +17,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import moment from "moment";
 import GemWatchInsert from "./GemWatchInsert";
 import { formatDate } from "../../../utils/DateUtils";
+//import puppeteer from 'puppeteer';
 
 const cellPooLink = (params) => {
   const poocoinUrl = "https://poocoin.app/tokens/" + params.value;
@@ -88,7 +89,7 @@ const cellAnalysisTwitterLink = (params) => {
   );
 };
 
-const GemWatch = () => {
+const PinkTrending = () => {
   const [data, setData] = useState([]);
   const [tokenSearch, setTokenSearch] = useState("");
   const [tokenAddressSearch, setTokenAddressSearch] = useState("");
@@ -101,6 +102,8 @@ const GemWatch = () => {
   const [dateListTo, setDateListTo] = useState(null);
 
   const [gemWatchIds, setGemWatchIds] = useState([]);
+
+  const [dataPinkTrending, setDataPinkTrending] = useState([])
 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(15);
@@ -118,7 +121,26 @@ const GemWatch = () => {
     });
   };
 
+  const fetchDataPinkTrending = () => {
+    return axios.get(`https://pinksale-trending.s3.amazonaws.com/trending.json`)
+  }
+
   useEffect(() => {
+    fetchDataPinkTrending()
+    .then((res) => {
+      if(200 === res.status) {
+        console.log(res.data.data);
+        setDataPinkTrending(res.data.data)
+      }
+    })
+    .catch((err) => {
+      if (err.response && err.response.status === 404) {
+        // handle 404 error
+      } else {
+        // handle other errors
+      }
+    });
+
     fetchGemWatchingAll()
       .then((res) => {
         const gemwatchings = res.data;
@@ -241,6 +263,25 @@ const GemWatch = () => {
     setPageSize(newPageSize);
   };
 
+  const handleAnalysis = (e) => {
+    handleFetchHtmlDocument()
+    
+    
+  }
+
+  async function getSourceAsDOM() {
+    //const browser = await puppeteer.launch();
+    //const page = await browser.newPage();
+    //await page.goto('https://www.pinksale.finance/launchpad/0xe2bc2ec20d15e1ED0Dba5b368bc5c40d6aCD7D41?chain=BSC', { waitUntil: 'networkidle2' });
+    //const html = await page.content();
+    //await browser.close();
+    //console.log(html);
+    //setHtml(html);
+  }
+
+  const handleFetchHtmlDocument = async () => {
+    getSourceAsDOM()
+  };
   const columns = [
     { field: "id", headerName: "ID", width: 30, headerAlign: "center" },
     { field: "token", headerName: "Token", width: 200, headerAlign: "center" },
@@ -588,6 +629,13 @@ const GemWatch = () => {
         >
           DELETE
         </Button>
+        <Button
+          variant="contained"
+          sx={{ marginRight: 1, height: 30 }}
+          onClick={handleAnalysis}
+        >
+          Analysis
+        </Button>
       </Box>
 
       <DataGrid
@@ -641,4 +689,4 @@ const GemWatch = () => {
   );
 };
 
-export default GemWatch;
+export default PinkTrending;

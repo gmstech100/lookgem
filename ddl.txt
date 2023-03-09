@@ -1,0 +1,8 @@
+SET SQL_SAFE_UPDATES = 0;
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `calculate_age` BEFORE INSERT ON `gem_watch` FOR EACH ROW BEGIN
+    SET NEW.age = DATEDIFF(CURDATE(), STR_TO_DATE(NEW.date_list, '%d%m%Y')) + 1;
+END
+
+ALTER TABLE abici.gem_watch
+ADD COLUMN age INT;

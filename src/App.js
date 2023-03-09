@@ -24,6 +24,7 @@ import Messages1 from "./pages/messages/Messages1";
 import Messages2 from "./pages/messages/Messages2";
 import PinkGems from "./pages/overview/PinkGem/PinkGems";
 import GemWatch from "./pages/overview/GemWatch/GemWatch";
+import PinkTrending from "./pages/overview/PinkTrending/PinkTrending";
 
 export default function App() {
   return (
@@ -32,10 +33,11 @@ export default function App() {
         <Sidebar />
         <div className="element-container">
           <Routes>
-            <Route path="/" element={<PinkGems />} />
+            <Route path="/" element={<GemWatch />} />
             <Route path="/overview" element={<Overview />} />
             <Route path="/overview/pinkgems" element={<PinkGems />} />
             <Route path="/overview/gemwatching" element={<GemWatch />} />
+            <Route path="/overview/pinktrending" element={<PinkTrending />} />
             <Route path="/overview/users" element={<Users />} />
             <Route path="/overview/revenue" element={<Revenue />} />
             <Route path="/reports" element={<Reports />} />
