@@ -1,25 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import {
-  Box,
-  Button,
-  MenuItem,
-  Select,
-  TextField,
-  FormControl,
-  InputLabel,
-  ToggleButton,
-} from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import moment from "moment";
-import GemWatchInsert from "./GemWatchInsert";
-import { formatDate } from "../../../utils/DateUtils";
-//import puppeteer from 'puppeteer';
+import { cellWebsiteLink } from "../../../utils/RenderCellLink";
 
-const cellPooLink = (params) => {
+
+const cellPinkSaleLink = (params) => {
   const poocoinUrl = "https://poocoin.app/tokens/" + params.value;
   return (
     <>
@@ -30,40 +15,6 @@ const cellPooLink = (params) => {
           cursor: "pointer",
         }}
         onClick={() => window.open(poocoinUrl, "_blank")}
-      >
-        {params.value}
-      </a>
-    </>
-  );
-};
-
-const cellTwitterLink = (params) => {
-  return (
-    <>
-      <a
-        style={{
-          textDecoration: "underline",
-          color: "#0a53bf",
-          cursor: "pointer",
-        }}
-        onClick={() => window.open(params.value, "_blank")}
-      >
-        {params.value}
-      </a>
-    </>
-  );
-};
-
-const cellWebsiteLink = (params) => {
-  return (
-    <>
-      <a
-        style={{
-          textDecoration: "underline",
-          color: "#0a53bf",
-          cursor: "pointer",
-        }}
-        onClick={() => window.open(params.value, "_blank")}
       >
         {params.value}
       </a>
@@ -91,56 +42,17 @@ const cellAnalysisTwitterLink = (params) => {
 
 const PinkTrending = () => {
   const [data, setData] = useState([]);
-  const [tokenSearch, setTokenSearch] = useState("");
-  const [tokenAddressSearch, setTokenAddressSearch] = useState("");
-  const [followersSearch, setFollowersSearch] = useState(0);
-  const [chain, setChain] = React.useState("");
-  const [hasBscCall, setHasBscCall] = React.useState("");
-  const [hasShillSealsCall, setHasShillSealsCall] = React.useState("");
-  const [launchPadSearch, setLaunchPadSearch] = useState("");
-  const [dateListFrom, setDateListFrom] = useState(null);
-  const [dateListTo, setDateListTo] = useState(null);
-
-  const [gemWatchIds, setGemWatchIds] = useState([]);
-
-  const [dataPinkTrending, setDataPinkTrending] = useState([])
-
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(15);
-  const [openInsert, setOpenInsert] = useState(false);
+  const [pageSize, setPageSize] = useState(100);
 
-  const fetchGemWatching = (params) => {
-    return axios.get(`${process.env.REACT_APP_BACKEND_URL}/gemwatching`, {
-      params,
-    });
-  };
 
   const fetchGemWatchingAll = (params) => {
-    return axios.get(`${process.env.REACT_APP_BACKEND_URL}/gemwatching/all`, {
+    return axios.get(`${process.env.REACT_APP_BACKEND_URL}/pinktrending`, {
       params,
     });
   };
 
-  const fetchDataPinkTrending = () => {
-    return axios.get(`https://pinksale-trending.s3.amazonaws.com/trending.json`)
-  }
-
   useEffect(() => {
-    fetchDataPinkTrending()
-    .then((res) => {
-      if(200 === res.status) {
-        console.log(res.data.data);
-        setDataPinkTrending(res.data.data)
-      }
-    })
-    .catch((err) => {
-      if (err.response && err.response.status === 404) {
-        // handle 404 error
-      } else {
-        // handle other errors
-      }
-    });
-
     fetchGemWatchingAll()
       .then((res) => {
         const gemwatchings = res.data;
@@ -163,99 +75,6 @@ const PinkTrending = () => {
       });
   }, []);
 
-  const handleSearch = async (e) => {
-    const params = {
-      token: tokenSearch,
-      tokenAddress: tokenAddressSearch,
-      followers: followersSearch,
-      dateListFrom:
-        dateListFrom === null
-          ? ""
-          : moment(dateListFrom.toString()).format("YYYY-MM-DD"),
-      dateListTo:
-        dateListTo === null
-          ? ""
-          : moment(dateListTo.toString()).format("YYYY-MM-DD"),
-      chain: chain,
-      hasBscCall: hasBscCall,
-      hasShillSealsCall: hasShillSealsCall,
-      launchPad: launchPadSearch,
-    };
-    fetchGemWatching(params)
-      .then((res) => {
-        const gemwatchings = res.data;
-
-        const newData = gemwatchings.map((obj) => {
-          // do whatever analysis you need on the twitter field to get the analysisTwitter value
-          const analysisTwitter = `${obj.twitter}`.split("/").pop();
-
-          // return a new object with the analysisTwitter field added
-          return { ...obj, analysisTwitter };
-        });
-        setData(newData);
-      })
-      .catch((err) => {
-        if (err.response && err.response.status === 404) {
-          // handle 404 error
-        } else {
-          // handle other errors
-        }
-      });
-  };
-
-  const handleHasBscCallChange = (event) => {
-    setHasBscCall(event.target.value);
-  };
-  const handleHasShillSealsCallChange = (event) => {
-    setHasShillSealsCall(event.target.value);
-  };
-  const handleChainChange = (event) => {
-    setChain(event.target.value);
-  };
-
-  const handleAdd = () => {
-    setOpenInsert(true);
-  };
-
-  const handleDelete = (e) => {
-    const params = {
-      id: gemWatchIds.join(","),
-    };
-    axios
-      .delete(`${process.env.REACT_APP_BACKEND_URL}/gemwatching`, {
-        params: params,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        if (200 === response.status) {
-          console.log("200");
-          handleSearch();
-        }
-      })
-      .catch((error) => {
-        // handle the error here
-      });
-  };
-
-  const handleTokenSearch = (e) => {
-    setTokenSearch(e.target.value);
-  };
-
-  const handleLaunchPadSearch = (e) => {
-    setLaunchPadSearch(e.target.value);
-  };
-
-  const handleTokenAddressSearch = (e) => {
-    setTokenAddressSearch(e.target.value);
-  };
-
-  const handleFollowersSearch = (e) => {
-    setFollowersSearch(e.target.value);
-  };
-
   const handleChangePage = (newPage) => {
     setPage(newPage);
   };
@@ -263,25 +82,6 @@ const PinkTrending = () => {
     setPageSize(newPageSize);
   };
 
-  const handleAnalysis = (e) => {
-    handleFetchHtmlDocument()
-    
-    
-  }
-
-  async function getSourceAsDOM() {
-    //const browser = await puppeteer.launch();
-    //const page = await browser.newPage();
-    //await page.goto('https://www.pinksale.finance/launchpad/0xe2bc2ec20d15e1ED0Dba5b368bc5c40d6aCD7D41?chain=BSC', { waitUntil: 'networkidle2' });
-    //const html = await page.content();
-    //await browser.close();
-    //console.log(html);
-    //setHtml(html);
-  }
-
-  const handleFetchHtmlDocument = async () => {
-    getSourceAsDOM()
-  };
   const columns = [
     { field: "id", headerName: "ID", width: 30, headerAlign: "center" },
     { field: "token", headerName: "Token", width: 200, headerAlign: "center" },
@@ -290,14 +90,20 @@ const PinkTrending = () => {
       headerName: "Token Address",
       width: 450,
       headerAlign: "center",
-      renderCell: cellPooLink,
+    },
+    {
+      field: "pinksaleAddress",
+      headerName: "Pinksale Address",
+      width: 450,
+      headerAlign: "center",
+      renderCell: cellPinkSaleLink,
     },
     {
       field: "twitter",
       headerName: "Twitter",
       width: 200,
       headerAlign: "center",
-      renderCell: cellTwitterLink,
+      renderCell: cellWebsiteLink,
     },
     {
       field: "analysisTwitter",
@@ -314,15 +120,6 @@ const PinkTrending = () => {
       headerAlign: "center",
     },
     {
-      field: "age",
-      headerName: "Age",
-      width: 80,
-      type: "number",
-      headerAlign: "center",
-      valueFormatter: (cell) =>
-        cell.value !== "" ? cell.value + " days" : cell.value,
-    },
-    {
       field: "telegram",
       headerName: "Telegram",
       width: 80,
@@ -336,29 +133,87 @@ const PinkTrending = () => {
       renderCell: cellWebsiteLink,
     },
     {
-      field: "dateList",
-      headerName: "Date List",
+      field: "typeLaunch",
+      headerName: "Type Launch",
       width: 100,
       headerAlign: "center",
-      valueFormatter: (cell) =>
-        cell.value !== "" ? formatDate(cell.value) : cell.value,
     },
     { field: "chain", headerName: "Chain", width: 60, headerAlign: "center" },
     {
-      field: "hasBscCall",
-      headerName: "Bsc Call",
+      field: "formattedSoftCap",
+      headerName: "Soft Cap",
       width: 80,
       headerAlign: "center",
     },
     {
-      field: "hasShillSealsCall",
-      headerName: "Shill Seals Call",
+      field: "formattedHardCap",
+      headerName: "Hard Cap",
       width: 120,
       headerAlign: "center",
     },
     {
-      field: "launchPad",
-      headerName: "Launch Pad",
+      field: "startTime",
+      headerName: "Presale Start Time",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "endTime",
+      headerName: "Presale End Time",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "liquidityPercentage",
+      headerName: "Liquidity Percent",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "liquidityLockDuration",
+      headerName: "Liquidity Lockup Time",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "hasKyc",
+      headerName: "hasKyc",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "hasAudit",
+      headerName: "hasAudit",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "hasSafu",
+      headerName: "hasSafu",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "poolDetails",
+      headerName: "poolDetails",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "kycDetails",
+      headerName: "kycDetails",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "min",
+      headerName: "Min",
+      width: 100,
+      headerAlign: "center",
+    },
+    {
+      field: "max",
+      headerName: "Max",
       width: 100,
       headerAlign: "center",
     },
@@ -366,278 +221,7 @@ const PinkTrending = () => {
 
   return (
     <div className="users" style={{ display: "flex", flexDirection: "column" }}>
-      <Box
-        component="form"
-        sx={{
-          p: 0.5,
-          border: 1,
-          borderColor: "rgba(192,192,192,0.2)",
-          backgroundColor: "rgb(241,241,241)",
-          justifyContent: "stretch",
-          height: 95,
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "left",
-          marginTop: 0.5,
-        }}
-        noValidate
-        autoComplete="off"
-      >
-        <Box sx={{ display: "flex" }}>
-          <TextField
-            label="Token"
-            id="tokenSearch"
-            size="small"
-            sx={{
-              marginLeft: 1,
-              width: 100,
-              alignSelf: "center",
-              "& .MuiInputBase-root": {
-                height: 37,
-                background: "white",
-              },
-              "& .MuiFormLabel-root": {
-                fontSize: "15px",
-              },
-            }}
-            onChange={handleTokenSearch}
-          />
-          <TextField
-            sx={{
-              marginLeft: 1,
-              width: 500,
-              alignSelf: "center",
-              "& .MuiInputBase-root": {
-                height: 37,
-                background: "white",
-              },
-              "& .MuiFormLabel-root": {
-                fontSize: "15px",
-              },
-            }}
-            label="Token Address"
-            id="tokenAddressSearch"
-            size="small"
-            onChange={handleTokenAddressSearch}
-          />
-          <TextField
-            sx={{
-              marginLeft: 1,
-              width: 100,
-              alignSelf: "center",
-              "& .MuiInputBase-root": {
-                height: 37,
-                background: "white",
-              },
-              "& .MuiFormLabel-root": {
-                fontSize: "15px",
-              },
-            }}
-            label="Followers"
-            id="followersSearch"
-            size="small"
-            onChange={handleFollowersSearch}
-          />
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <div style={{ marginLeft: 9, height: 30 }}>
-              <DatePicker
-                label="Date List From"
-                disableFuture
-                value={dateListFrom}
-                onChange={(newValue) => setDateListFrom(newValue)}
-                renderInput={(params) => (
-                  <TextField
-                    size="small"
-                    sx={{
-                      alignSelf: "center",
-                      "& .MuiInputBase-root": {
-                        height: 37,
-                        width: 150,
-                        background: "white",
-                      },
-                      "& .MuiFormLabel-root": {
-                        fontSize: "15px",
-                      },
-                    }}
-                    {...params}
-                  />
-                )}
-                inputFormat="DD-MM-YYYY"
-              />
-              <DatePicker
-                label="Date List To"
-                disableFuture
-                value={dateListTo}
-                onChange={(newValue) => setDateListTo(newValue)}
-                renderInput={(params) => (
-                  <TextField
-                    size="small"
-                    sx={{
-                      alignSelf: "center",
-                      "& .MuiInputBase-root": {
-                        height: 37,
-                        width: 150,
-                        background: "white",
-                      },
-                      "& .MuiFormLabel-root": {
-                        fontSize: "15px",
-                      },
-                    }}
-                    {...params}
-                  />
-                )}
-                inputFormat="DD-MM-YYYY"
-              />
-            </div>
-          </LocalizationProvider>
-        </Box>
-        <Box sx={{ display: "flex", marginTop: 1 }}>
-          <TextField
-            label="Launch Pad"
-            id="launchPadSearch"
-            size="small"
-            sx={{
-              marginLeft: 1,
-              alignSelf: "center",
-              "& .MuiInputBase-root": {
-                height: 37,
-                width: 150,
-                background: "white",
-              },
-              "& .MuiFormLabel-root": {
-                fontSize: "15px",
-              },
-            }}
-            onChange={handleLaunchPadSearch}
-          />
-          <TextField
-            value={chain}
-            id="chain"
-            select
-            label="Chain"
-            defaultValue="all"
-            style={{ width: 150, height: 38 }}
-            onChange={handleChainChange}
-            size="small"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                backgroundColor: "white",
-                marginLeft: 1,
-              },
-            }}
-            SelectProps={{
-              style: {
-                height: 37,
-              },
-            }}
-          >
-            <MenuItem value="">
-              <em>All</em>
-            </MenuItem>
-            <MenuItem value={"BSC"}>BSC</MenuItem>
-            <MenuItem value={"ETH"}>ETH</MenuItem>
-          </TextField>
-          <TextField
-            value={hasBscCall}
-            id="chain"
-            select
-            label="BSC Call"
-            defaultValue="all"
-            style={{ width: 150, height: 38 }}
-            onChange={handleHasBscCallChange}
-            size="small"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                backgroundColor: "white",
-                marginLeft: 1,
-              },
-            }}
-            SelectProps={{
-              style: {
-                height: 37,
-              },
-            }}
-          >
-            <MenuItem value="">
-              <em>All</em>
-            </MenuItem>
-            <MenuItem value={1}>Yes</MenuItem>
-            <MenuItem value={0}>No</MenuItem>
-          </TextField>
-          <TextField
-            value={hasShillSealsCall}
-            id="chain"
-            select
-            label="Shill Seals Call"
-            defaultValue="all"
-            style={{ width: 150, height: 38 }}
-            onChange={handleHasShillSealsCallChange}
-            size="small"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                backgroundColor: "white",
-                marginLeft: 1,
-              },
-            }}
-            SelectProps={{
-              style: {
-                height: 37,
-              },
-            }}
-          >
-            <MenuItem value="">
-              <em>All</em>
-            </MenuItem>
-            <MenuItem value={1}>Yes</MenuItem>
-            <MenuItem value={0}>No</MenuItem>
-          </TextField>
-        </Box>
-      </Box>
-      <Box
-        component="form"
-        sx={{
-          p: 1,
-          border: 1,
-          borderColor: "grey.300",
-          backgroundColor: "rgb(241,241,241)",
-          width: "100%",
-          display: "flex",
-          marginTop: 0.5,
-        }}
-        noValidate
-        autoComplete="off"
-      >
-        <Button
-          variant="contained"
-          sx={{ marginRight: 1, height: 30 }}
-          onClick={handleSearch}
-        >
-          SEARCH
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ marginRight: 1, height: 30 }}
-          onClick={handleAdd}
-        >
-          ADD
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ marginRight: 1, height: 30 }}
-          onClick={handleDelete}
-        >
-          DELETE
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ marginRight: 1, height: 30 }}
-          onClick={handleAnalysis}
-        >
-          Analysis
-        </Button>
-      </Box>
-
+      
       <DataGrid
         sx={{
           mt: 1,
@@ -673,18 +257,7 @@ const PinkTrending = () => {
         paginationMode="client"
         onPageChange={handleChangePage}
         onPageSizeChange={handleChangeRowsPerPage}
-        checkboxSelection
-        onSelectionModelChange={(ids) => {
-          setGemWatchIds(ids);
-        }}
       ></DataGrid>
-      {openInsert && (
-        <GemWatchInsert
-          openInsert
-          setOpenInsert={setOpenInsert}
-          searchAgain={handleSearch()}
-        />
-      )}
     </div>
   );
 };

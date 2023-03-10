@@ -5,11 +5,7 @@ import {
   Box,
   Button,
   MenuItem,
-  Select,
   TextField,
-  FormControl,
-  InputLabel,
-  ToggleButton,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -17,6 +13,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import moment from "moment";
 import GemWatchInsert from "./GemWatchInsert";
 import { formatDate } from "../../../utils/DateUtils";
+import { cellWebsiteLink } from "../../../utils/RenderCellLink";
 
 const cellPooLink = (params) => {
   const poocoinUrl = "https://poocoin.app/tokens/" + params.value;
@@ -37,23 +34,6 @@ const cellPooLink = (params) => {
 };
 
 const cellTwitterLink = (params) => {
-  return (
-    <>
-      <a
-        style={{
-          textDecoration: "underline",
-          color: "#0a53bf",
-          cursor: "pointer",
-        }}
-        onClick={() => window.open(params.value, "_blank")}
-      >
-        {params.value}
-      </a>
-    </>
-  );
-};
-
-const cellWebsiteLink = (params) => {
   return (
     <>
       <a

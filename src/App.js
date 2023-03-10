@@ -24,7 +24,7 @@ import Messages1 from "./pages/messages/Messages1";
 import Messages2 from "./pages/messages/Messages2";
 import GemWatch from "./pages/overview/GemWatch/GemWatch";
 import PinkTrending from "./pages/overview/PinkTrending/PinkTrending";
-import PinkGemsListed from "./pages/overview/PinkGemListed/PinkGemsListed";
+import PinkGemsListed from "./pages/overview/PinkGemsListed/PinkGemsListed";
 
 export default function App() {
   return (
