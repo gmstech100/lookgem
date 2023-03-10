@@ -10,7 +10,8 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import PinkGemInsert from "./PinkGemInsert";
+import PinkGemInsert from "./PinkGemsListedInsert";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 
 const cellPooLink = (params) => {
   const poocoinUrl = "https://poocoin.app/tokens/" + params.value;
@@ -65,7 +66,7 @@ const cellAnalysisTwitterLink = (params) => {
   );
 };
 
-const PinkGems = () => {
+const PinkGemsListed = () => {
   const [data, setData] = useState([]);
   const [tokenSearch, setTokenSearch] = useState("");
   const [tokenAddressSearch, setTokenAddressSearch] = useState("");
@@ -201,73 +202,170 @@ const PinkGems = () => {
       <Box
         component="form"
         sx={{
-          p: 4,
+          p: 0.5,
           border: 1,
-          borderColor: "grey.300",
+          borderColor: "rgba(192,192,192,0.2)",
           backgroundColor: "rgb(241,241,241)",
+          justifyContent: "stretch",
+          height: 95,
           width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "left",
+          marginTop: 0.5,
         }}
         noValidate
         autoComplete="off"
       >
-        <TextField
-          label="Token"
-          id="tokenSearch"
-          size="small"
-          onChange={handleTokenSearch}
-        />
-        <TextField
-          sx={{ marginLeft: 1, width: 500 }}
-          label="Token Address"
-          id="tokenAddressSearch"
-          size="small"
-          onChange={handleTokenAddressSearch}
-        />
-        <TextField
-          sx={{ marginLeft: 1, width: 100 }}
-          label="Followers"
-          id="followersSearch"
-          size="small"
-          onChange={handleFollowersSearch}
-        />
-        <FormControl sx={{ marginLeft: 1, minWidth: 80 }}>
-          <InputLabel>Kyc</InputLabel>
-          <Select
-            value={statusKyc}
-            label="Status"
+        <Box sx={{ display: "flex" }}>
+          <TextField
+            label="Token"
+            id="tokenSearch"
             size="small"
+            sx={{
+              marginLeft: 1,
+              width: 100,
+              alignSelf: "center",
+              "& .MuiInputBase-root": {
+                height: 37,
+                background: "white",
+              },
+              "& .MuiFormLabel-root": {
+                fontSize: "15px",
+              },
+            }}
+            onChange={handleTokenSearch}
+          />
+          <TextField
+            sx={{
+              marginLeft: 1,
+              width: 500,
+              alignSelf: "center",
+              "& .MuiInputBase-root": {
+                height: 37,
+                background: "white",
+              },
+              "& .MuiFormLabel-root": {
+                fontSize: "15px",
+              },
+            }}
+            label="Token Address"
+            id="tokenAddressSearch"
+            size="small"
+            onChange={handleTokenAddressSearch}
+          />
+          <TextField
+            sx={{
+              marginLeft: 1,
+              width: 100,
+              alignSelf: "center",
+              "& .MuiInputBase-root": {
+                height: 37,
+                background: "white",
+              },
+              "& .MuiFormLabel-root": {
+                fontSize: "15px",
+              },
+            }}
+            label="Followers"
+            id="followersSearch"
+            size="small"
+            onChange={handleFollowersSearch}
+          />
+        </Box>
+        <Box sx={{ display: "flex", marginTop: 1 }}>
+          <TextField
+            value={statusKyc}
+            id="Kyc"
+            select
+            label="Kyc"
+            defaultValue="all"
+            style={{ width: 150, height: 38 }}
             onChange={handleStatusKycChange}
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "white",
+                marginLeft: 1,
+              },
+            }}
+            SelectProps={{
+              style: {
+                height: 37,
+              },
+            }}
           >
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
             <MenuItem value={1}>Yes</MenuItem>
             <MenuItem value={0}>No</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl sx={{ marginLeft: 1, minWidth: 120 }}>
-          <InputLabel>Chart</InputLabel>
-          <Select
+          </TextField>
+          <TextField
             value={statusChart}
+            id="chain"
+            select
             label="Status"
-            size="small"
+            defaultValue="all"
+            style={{ width: 150, height: 38 }}
             onChange={handleStatusChartChange}
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "white",
+                marginLeft: 1,
+              },
+            }}
+            SelectProps={{
+              style: {
+                height: 37,
+              },
+            }}
           >
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
             <MenuItem value={1}>Pump</MenuItem>
             <MenuItem value={0}>Dump</MenuItem>
-          </Select>
-        </FormControl>
-        <Button sx={{ marginRight: 1 }} onClick={handleSearch}>
+          </TextField>
+        </Box>
+      </Box>
+      <Box
+        component="form"
+        sx={{
+          p: 1,
+          border: 1,
+          borderColor: "grey.300",
+          backgroundColor: "rgb(241,241,241)",
+          width: "100%",
+          display: "flex",
+          marginTop: 0.5,
+        }}
+        noValidate
+        autoComplete="off"
+      >
+        <Button
+          variant="contained"
+          sx={{ marginRight: 1, height: 30 }}
+          onClick={handleSearch}
+        >
           SEARCH
         </Button>
-        <Button sx={{ marginRight: 1 }} onClick={handleAdd}>
+        <Button
+          variant="contained"
+          sx={{ marginRight: 1, height: 30 }}
+          onClick={handleAdd}
+        >
           ADD
         </Button>
-        <Button sx={{ marginRight: 1 }}>DELETE</Button>
+        <Button
+          variant="contained"
+          sx={{ marginRight: 1, height: 30 }}
+        >
+          DELETE
+        </Button>
       </Box>
+
       <DataGrid
         sx={{
           mt: 1,
@@ -292,4 +390,4 @@ const PinkGems = () => {
   );
 };
 
-export default PinkGems;
+export default PinkGemsListed;

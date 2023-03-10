@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {Dialog, DialogTitle, DialogContent, Button, DialogActions} from "@mui/material";
 
-const PinkGemInsert = (props) => {
+const PinkGemsListedInsert = (props) => {
 
   const {
     openInsert,
@@ -47,4 +47,4 @@ const PinkGemInsert = (props) => {
   );
 };
 
-export default PinkGemInsert;
+export default PinkGemsListedInsert;

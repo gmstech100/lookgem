@@ -22,9 +22,9 @@ import Revenue from "./pages/overview/Revenue";
 import Products from "./pages/Products";
 import Messages1 from "./pages/messages/Messages1";
 import Messages2 from "./pages/messages/Messages2";
-import PinkGems from "./pages/overview/PinkGem/PinkGems";
 import GemWatch from "./pages/overview/GemWatch/GemWatch";
 import PinkTrending from "./pages/overview/PinkTrending/PinkTrending";
+import PinkGemsListed from "./pages/overview/PinkGemListed/PinkGemsListed";
 
 export default function App() {
   return (
@@ -35,7 +35,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<GemWatch />} />
             <Route path="/overview" element={<Overview />} />
-            <Route path="/overview/pinkgems" element={<PinkGems />} />
+            <Route path="/overview/pinkgemslisted" element={<PinkGemsListed />} />
             <Route path="/overview/gemwatching" element={<GemWatch />} />
             <Route path="/overview/pinktrending" element={<PinkTrending />} />
             <Route path="/overview/users" element={<Users />} />
