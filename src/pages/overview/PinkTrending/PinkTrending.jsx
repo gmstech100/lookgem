@@ -3,9 +3,12 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { cellWebsiteLink } from "../../../utils/RenderCellLink";
 
-
 const cellPinkSaleLink = (params) => {
-  const poocoinUrl = "https://poocoin.app/tokens/" + params.value;
+  const poocoinUrl =
+    "https://www.pinksale.finance/launchpad/" +
+    params.value +
+    "?chain=" +
+    params.row.chain;
   return (
     <>
       <a
@@ -16,7 +19,7 @@ const cellPinkSaleLink = (params) => {
         }}
         onClick={() => window.open(poocoinUrl, "_blank")}
       >
-        {params.value}
+        Pinksale Link
       </a>
     </>
   );
@@ -39,12 +42,34 @@ const cellAnalysisTwitterLink = (params) => {
     </>
   );
 };
+const TwitterLink = (params) => {
+  const url = params.value;
+  return (
+    <>
+      <a
+        style={{
+          textDecoration: "underline",
+          color: "#0a53bf",
+          cursor: "pointer",
+        }}
+        onClick={() => window.open(url, "_blank")}
+      >
+        Twitter Link
+      </a>
+    </>
+  );
+};
 
 const PinkTrending = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(100);
-
+  const [sortModel, setSortModel] = React.useState([
+    {
+      field: "endTime",
+      sort: "asc",
+    },
+  ]);
 
   const fetchGemWatchingAll = (params) => {
     return axios.get(`${process.env.REACT_APP_BACKEND_URL}/pinktrending`, {
@@ -83,32 +108,45 @@ const PinkTrending = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 30, headerAlign: "center" },
-    { field: "token", headerName: "Token", width: 200, headerAlign: "center" },
     {
-      field: "tokenAddress",
-      headerName: "Token Address",
-      width: 450,
+      field: "id",
+      headerName: "ID",
+      width: 30,
       headerAlign: "center",
+      sticky: "left",
+    },
+    {
+      field: "token",
+      headerName: "Token",
+      width: 130,
+      headerAlign: "center",
+      sticky: "left",
+    },
+    {
+      field: "symbol",
+      headerName: "Symbol",
+      width: 130,
+      headerAlign: "center",
+      sticky: "left",
     },
     {
       field: "pinksaleAddress",
-      headerName: "Pinksale Address",
-      width: 450,
+      headerName: "Pinksale",
+      width: 100,
       headerAlign: "center",
       renderCell: cellPinkSaleLink,
     },
     {
       field: "twitter",
       headerName: "Twitter",
-      width: 200,
+      width: 100,
       headerAlign: "center",
-      renderCell: cellWebsiteLink,
+      renderCell: TwitterLink,
     },
     {
       field: "analysisTwitter",
       headerName: "Twitter Analysis",
-      width: 200,
+      width: 130,
       headerAlign: "center",
       renderCell: cellAnalysisTwitterLink,
     },
@@ -119,12 +157,7 @@ const PinkTrending = () => {
       type: "number",
       headerAlign: "center",
     },
-    {
-      field: "telegram",
-      headerName: "Telegram",
-      width: 80,
-      headerAlign: "center",
-    },
+
     {
       field: "website",
       headerName: "Website",
@@ -137,62 +170,90 @@ const PinkTrending = () => {
       headerName: "Type Launch",
       width: 100,
       headerAlign: "center",
+      valueFormatter: (params) => {
+        const cellValue = params.value;
+        if (cellValue === "33") {
+          return "Fair Launch";
+        } else if (cellValue === "11") {
+          return "Presale";
+        } else if (cellValue === "133") {
+          return "Subscription";
+        } else {
+          return cellValue;
+        }
+      },
+    },
+    {
+      field: "hasAudit",
+      headerName: "Audit",
+      width: 40,
+      headerAlign: "center",
+    },
+    {
+      field: "hasKyc",
+      headerName: "Kyc",
+      width: 40,
+      headerAlign: "center",
+    },
+
+    {
+      field: "hasSafu",
+      headerName: "Safu",
+      width: 40,
+      headerAlign: "center",
     },
     { field: "chain", headerName: "Chain", width: 60, headerAlign: "center" },
     {
-      field: "formattedSoftCap",
+      field: "startTime",
+      headerName: "Presale Start Time",
+      width: 180,
+      headerAlign: "center",
+      valueFormatter: (params) => {
+        const date = new Date(params.value * 1000);
+        const options = { timeZone: "Asia/Bangkok" };
+        return date.toLocaleString("en-US", options);
+      },
+    },
+    {
+      field: "endTime",
+      headerName: "Presale End Time",
+      width: 180,
+      headerAlign: "center",
+      valueFormatter: (params) => {
+        const date = new Date(params.value * 1000);
+        const options = { timeZone: "Asia/Bangkok" };
+        return date.toLocaleString("en-US", options);
+      },
+    },
+    {
+      field: "softCap",
       headerName: "Soft Cap",
       width: 80,
       headerAlign: "center",
     },
     {
-      field: "formattedHardCap",
+      field: "hardCap",
       headerName: "Hard Cap",
-      width: 120,
-      headerAlign: "center",
-    },
-    {
-      field: "startTime",
-      headerName: "Presale Start Time",
-      width: 100,
-      headerAlign: "center",
-    },
-    {
-      field: "endTime",
-      headerName: "Presale End Time",
-      width: 100,
+      width: 80,
       headerAlign: "center",
     },
     {
       field: "liquidityPercentage",
       headerName: "Liquidity Percent",
-      width: 100,
+      width: 120,
       headerAlign: "center",
     },
     {
       field: "liquidityLockDuration",
       headerName: "Liquidity Lockup Time",
-      width: 100,
+      width: 160,
       headerAlign: "center",
+      valueFormatter: (params) => {
+        const days = params.value / (60 * 60 * 24); // convert seconds to days
+        return `${days.toFixed(2)} days`;
+      },
     },
-    {
-      field: "hasKyc",
-      headerName: "hasKyc",
-      width: 100,
-      headerAlign: "center",
-    },
-    {
-      field: "hasAudit",
-      headerName: "hasAudit",
-      width: 100,
-      headerAlign: "center",
-    },
-    {
-      field: "hasSafu",
-      headerName: "hasSafu",
-      width: 100,
-      headerAlign: "center",
-    },
+
     {
       field: "poolDetails",
       headerName: "poolDetails",
@@ -208,20 +269,19 @@ const PinkTrending = () => {
     {
       field: "min",
       headerName: "Min",
-      width: 100,
+      width: 50,
       headerAlign: "center",
     },
     {
       field: "max",
       headerName: "Max",
-      width: 100,
+      width: 50,
       headerAlign: "center",
     },
   ];
 
   return (
     <div className="users" style={{ display: "flex", flexDirection: "column" }}>
-      
       <DataGrid
         sx={{
           mt: 1,
@@ -257,6 +317,8 @@ const PinkTrending = () => {
         paginationMode="client"
         onPageChange={handleChangePage}
         onPageSizeChange={handleChangeRowsPerPage}
+        sortModel={sortModel}
+        onSortModelChange={(model) => setSortModel(model)}
       ></DataGrid>
     </div>
   );
