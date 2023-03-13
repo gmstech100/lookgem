@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { cellWebsiteLink } from "../../../utils/RenderCellLink";
 import { Alert, Box, Button, Tooltip } from "@mui/material";
-import ReactDOM from 'react-dom';
 
 const cellPinkSaleLink = (params) => {
   const poocoinUrl =
@@ -62,7 +61,7 @@ const TwitterLink = (params) => {
   );
 };
 
-const PinkTrending = () => {
+const PinkTrendingWatch = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(100);
@@ -72,16 +71,19 @@ const PinkTrending = () => {
       sort: "asc",
     },
   ]);
-  const [pinkTrendingIds, setPinkTrendingIds] = useState([]);
+  const [pinkTrendingWatchIds, setPinkTrendingWatchIds] = useState([]);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
   const fetchGemWatchingAll = (params) => {
-    return axios.get(`${process.env.REACT_APP_BACKEND_URL}/pinktrending`, {
-      params,
-    });
+    return axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/pinktrendingwatchs`,
+      {
+        params,
+      }
+    );
   };
 
-  useEffect(() => {
+  const handleSearch = async (e) => {
     fetchGemWatchingAll()
       .then((res) => {
         const gemwatchings = res.data;
@@ -102,6 +104,10 @@ const PinkTrending = () => {
           // handle other errors
         }
       });
+  } 
+
+  useEffect(() => {
+    handleSearch()
   }, []);
 
   const handleChangePage = (newPage) => {
@@ -111,18 +117,29 @@ const PinkTrending = () => {
     setPageSize(newPageSize);
   };
 
-  const handleAdd = (e) => {
-    pinkTrendingIds.forEach((id) => {
-      const url = `${process.env.REACT_APP_BACKEND_URL}/pinktrendingwatchs`;
-      const insertdata = data.filter((item) => item.id === id);
-      axios
-        .post(url, insertdata[0])
-        .then((res) => {
+  const handleDelete = (e) => {
+    const params = {
+      id: pinkTrendingWatchIds.join(","),
+    };
+    axios
+      .delete(`${process.env.REACT_APP_BACKEND_URL}/pinktrendingwatchs`, {
+        params: params,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        if (200 === response.status) {
+          handleSearch();
           setShowSuccessAlert(true);
-        })
-        .catch((err) => console.log(err));
-    });
+        }
+      })
+      .catch((error) => {
+        // handle the error here
+      });
   };
+
   const handleCloseAlert = () => {
     setShowSuccessAlert(false);
   };
@@ -134,6 +151,7 @@ const PinkTrending = () => {
       width: 30,
       headerAlign: "center",
       sticky: "left",
+      hide: true,
     },
     {
       field: "token",
@@ -349,7 +367,7 @@ const PinkTrending = () => {
           style={{ marginTop: '20px' }}
         >
           <Alert severity="success" onClose={handleCloseAlert}>
-            Item added successfully!
+            Item deleted successfully!
           </Alert>
         </Box>
       )}
@@ -374,9 +392,9 @@ const PinkTrending = () => {
         <Button
           variant="contained"
           sx={{ marginRight: 1, height: 30, width: 60 }}
-          onClick={handleAdd}
+          onClick={handleDelete}
         >
-          ADD
+          Delete
         </Button>
         
       </Box>
@@ -419,12 +437,14 @@ const PinkTrending = () => {
         onSortModelChange={(model) => setSortModel(model)}
         checkboxSelection
         onSelectionModelChange={(ids) => {
-          setPinkTrendingIds(ids);
+          setPinkTrendingWatchIds(ids);
         }}
+        initialState={{
+          pinnedColumns: { left: ['token'] },
+      }}
       ></DataGrid>
-      
     </div>
   );
 };
 
-export default PinkTrending;
+export default PinkTrendingWatch;

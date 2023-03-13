@@ -29,6 +29,11 @@ export const SidebarData = [
         icon: <IoIcons.IoIosPaper />
       },
       {
+        title: 'Pink Trending Watch',
+        path: '/overview/pinktrendingwatch',
+        icon: <IoIcons.IoIosPaper />
+      },
+      {
         title: 'Users',
         path: '/overview/users',
         icon: <IoIcons.IoIosPaper />
