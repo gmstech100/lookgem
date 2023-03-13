@@ -26,6 +26,7 @@ import GemWatch from "./pages/overview/GemWatch/GemWatch";
 import PinkTrending from "./pages/overview/PinkTrending/PinkTrending";
 import PinkGemsListed from "./pages/overview/PinkGemsListed/PinkGemsListed";
 import PinkTrendingWatch from "./pages/overview/PinkTrendingWatch/PinkTrendingWatch";
+import CoingeckoNewList from "./pages/overview/Coingecko/CoingeckoNewList";
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/overview/gemwatching" element={<GemWatch />} />
             <Route path="/overview/pinktrending" element={<PinkTrending />} />
             <Route path="/overview/pinktrendingwatch" element={<PinkTrendingWatch />} />
+            <Route path="/overview/coingeckonewlist" element={<CoingeckoNewList />} />
             <Route path="/overview/users" element={<Users />} />
             <Route path="/overview/revenue" element={<Revenue />} />
             <Route path="/reports" element={<Reports />} />

@@ -14,13 +14,13 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: 'Pink Gems Listed',
-        path: '/overview/pinkgemslisted',
+        title: 'Gem Watching',
+        path: '/overview/gemwatching',
         icon: <IoIcons.IoIosPaper />
       },
       {
-        title: 'Gem Watching',
-        path: '/overview/gemwatching',
+        title: 'Pink Trending Watch',
+        path: '/overview/pinktrendingwatch',
         icon: <IoIcons.IoIosPaper />
       },
       {
@@ -29,8 +29,13 @@ export const SidebarData = [
         icon: <IoIcons.IoIosPaper />
       },
       {
-        title: 'Pink Trending Watch',
-        path: '/overview/pinktrendingwatch',
+        title: 'Coingecko New List',
+        path: '/overview/coingeckonewlist',
+        icon: <IoIcons.IoIosPaper />
+      },
+      {
+        title: 'Pink Gems Listed',
+        path: '/overview/pinkgemslisted',
         icon: <IoIcons.IoIosPaper />
       },
       {
