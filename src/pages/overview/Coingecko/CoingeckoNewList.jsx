@@ -71,7 +71,7 @@ const CoingeckoNewList = () => {
       sort: "asc",
     },
   ]);
-  const [pinkTrendingWatchIds, setPinkTrendingWatchIds] = useState([]);
+  const [cgWatchIds, setCgWatchIds] = useState([]);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
   const fetchGemWatchingAll = (params) => {
@@ -117,22 +117,27 @@ const CoingeckoNewList = () => {
     setPageSize(newPageSize);
   };
 
-  const handleDelete = (e) => {
-    const params = {
-      id: pinkTrendingWatchIds.join(","),
-    };
+  const handleAddWatch = (e) => {
     axios
-      .delete(`${process.env.REACT_APP_BACKEND_URL}/pinktrendingwatchs`, {
-        params: params,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-      })
+      .get(`${process.env.REACT_APP_BACKEND_URL}/coingeckonewcurrencies/addwatch/${cgWatchIds.join(',')}`)
       .then((response) => {
         if (200 === response.status) {
+          console.log("200");
           handleSearch();
-          setShowSuccessAlert(true);
+        }
+      })
+      .catch((error) => {
+        // handle the error here
+      });
+  };
+
+  const handleRemoveWatch = (e) => {
+    axios
+      .get(`${process.env.REACT_APP_BACKEND_URL}/coingeckonewcurrencies/removewatch/${cgWatchIds.join(',')}`)
+      .then((response) => {
+        if (200 === response.status) {
+          console.log("200");
+          handleSearch();
         }
       })
       .catch((error) => {
@@ -163,6 +168,13 @@ const CoingeckoNewList = () => {
     {
       field: "symbol",
       headerName: "Symbol",
+      width: 130,
+      headerAlign: "center",
+      sticky: "left",
+    },
+    {
+      field: "watch",
+      headerName: "Watch",
       width: 130,
       headerAlign: "center",
       sticky: "left",
@@ -274,7 +286,7 @@ const CoingeckoNewList = () => {
           height: 40,
           width: "100%",
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "row",
           alignItems: "left",
           marginTop: 0.5,
         }}
@@ -283,10 +295,17 @@ const CoingeckoNewList = () => {
       >
         <Button
           variant="contained"
-          sx={{ marginRight: 1, height: 30, width: 60 }}
-          onClick={handleDelete}
+          sx={{ marginRight: 1, height: 30, width: 120 }}
+          onClick={handleAddWatch}
         >
-          Delete
+          Add Watch
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ marginRight: 1, height: 30, width: 160 }}
+          onClick={handleRemoveWatch}
+        >
+          Remove Watch
         </Button>
         
       </Box>
@@ -329,7 +348,7 @@ const CoingeckoNewList = () => {
         onSortModelChange={(model) => setSortModel(model)}
         checkboxSelection
         onSelectionModelChange={(ids) => {
-          setPinkTrendingWatchIds(ids);
+          setCgWatchIds(ids);
         }}
         initialState={{
           pinnedColumns: { left: ['token'] },
