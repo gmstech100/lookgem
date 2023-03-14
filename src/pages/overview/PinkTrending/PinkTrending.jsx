@@ -68,7 +68,7 @@ const PinkTrending = () => {
   const [pageSize, setPageSize] = useState(100);
   const [sortModel, setSortModel] = React.useState([
     {
-      field: "endTime",
+      field: "startTime",
       sort: "asc",
     },
   ]);
@@ -373,10 +373,10 @@ const PinkTrending = () => {
       >
         <Button
           variant="contained"
-          sx={{ marginRight: 1, height: 30, width: 60 }}
+          sx={{ marginRight: 1, height: 30, width: 180 }}
           onClick={handleAdd}
         >
-          ADD
+          ADD TO WATCH
         </Button>
         
       </Box>
